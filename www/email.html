@@ -42,21 +42,21 @@
                                         <h1 class="h4 text-gray-900 mb-2"></h1>
                                         <p class="mb-4"></p>
                                     </div>
-                                    <form class="user">
+                                    <form class="user" onsubmit="changeEmail(event)">
                                         <div class="form-group">
-                                            <input type="email" class="form-control form-control-user"
-                                                id="email" aria-describedby="email"
-                                                placeholder="last E-mail">
+                                            <input type="email" class="form-control form-control-user" id="last_email"
+                                                aria-describedby="email" placeholder="last E-mail">
                                         </div>
                                         <div class="form-group">
-                                            <input type="email" class="form-control form-control-user"
-                                                id="email" aria-describedby="email"
-                                                placeholder="New E-mail">
+                                            <input type="email" class="form-control form-control-user" id="new_email"
+                                                aria-describedby="email" placeholder="New E-mail">
                                         </div>
                                         <br>
-                                        <a href="profile.html" class="btn btn-primary btn-user btn-block">
-                                            CHANGE
-                                        </a>
+                                        <span class="err" style="color:red;display:none">An Error has occured when
+                                            changing your email.</span>
+                                        <span class="succ" style="color:green;display:none">Your email has been
+                                            changed successfully. You will be redirected soon.</span>
+                                        <input type="submit" value="Change" class="btn btn-primary btn-user btn-block">
                                     </form>
                                 </div>
                             </div>
@@ -79,6 +79,39 @@
 
     <!-- Custom scripts for all pages-->
     <script src="js/sb-admin-2.min.js"></script>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        function changeEmail(event) {
+            event.preventDefault();
+            let last_email = document.getElementById('last_email').value;
+            let new_email = document.getElementById('new_email').value;
+            if (last_email && new_email) {
+                axios
+                    .post(
+                        "http://127.0.0.1:8000/api/change_email", {
+                            last_email,
+                            'email':new_email
+                        }, {
+                            headers: {
+                                'Authorization': `Bearer ${localStorage.getItem('token')}`
+                            }
+                        }
+                    )
+                    .then((ans) => {
+                        return ans.data;
+                    }).then(data => {
+                        document.querySelector('.succ').style.display = "block";
+                        setTimeout(() => {
+                            window.location = "/menu.html";
+                        }, 2000)
+
+                    }).catch(error => {
+                        document.querySelector('.err').style.display = "block";
+                    });
+            }
+        }
+    </script>
 
 </body>
 

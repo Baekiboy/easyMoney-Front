@@ -9,8 +9,12 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Register</title>
-
+    <title>History</title>
+<script>
+    if (!localStorage.getItem('token')) {
+        window.location = "/index.html";
+    }
+</script>
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link
@@ -21,65 +25,43 @@
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
 
     <link href='https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.3/css/intlTelInput.min.css" />
-  <!-- JS -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.3/js/intlTelInput.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.3/js/utils.min.js"></script>
-
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.3/css/intlTelInput.min.css" />
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.3/js/intlTelInput.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.3/js/utils.min.js"></script>
+<style>
+    .sent{
+        border-right: 1px solid #cacaca;
+    }
+</style>
 </head>
 
 <body class="bg-gradient-muted" id="page-top">
 
     <div class="container">
 
-        <div class="card o-hidden border-0 shadow-lg my-5">
-            <div class="card-body p-0">
-                <!-- Nested Row within Card Body -->
-                <div class="row">
-                    <div class="col-lg-5 d-none "></div>
-                    <div class="col-lg-7">
-                        <div class="p-5">
-                            <div class="text-center">
-                                <h1 class="h4 text-gray-700 mb-4">History</h1>
-                             </div>
-                                <form class="user" > 
-                                    <!-- Content Row -->
-                    <div class="row">
+        <div class="card o-hidden border-0 shadow-lg my-5 text-center">
+            <!-- Nested Row within Card Body -->
+            <h1 class=" text-gray-700 mb-4 mt-3">History</h1>
+            <div class="row history-container">
+                <div class="col-6 sent">
 
-                        <div class="col-lg-6">
-
-                            <!-- Overflow Hidden -->
-                            <div class="card mb-4">
-                                <div class="card-header py-3">
-                                    <div class="text-center">
-                                    <h6 class="m-0 font-weight-bold text-primary">01/01/2021 12:12:12 </h6>
-                                    </div>
-                                </div>
-                                
-                                <div class="card-body">
-                                   servise transfer to : 55555555
-                                   <hr>
-                                   amount : $50.000
-                                </div>
-                            </div>
-                            
-                        </div>
-                    </div>
-                    <br>
-                    <a href="menu.html" class="btn btn-primary btn-user btn-block text-white" >
-                        BACK
-                    </a>    
-                        </form>
-                            </div>
-                    </div>
                 </div>
+                <div class="col-6 reciever">
+
+                </div>
+
             </div>
+            <div class="row">
+                <div class="col-6"></div>
+                <a href="/menu.html" class="btn btn-primary btn-user btn-block">Back</a></div>
         </div>
 
     </div>
-     <!-- Scroll to Top Button-->
-     <a class="scroll-to-top rounded" href="#page-top">
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
     <!-- Bootstrap core JavaScript-->
@@ -98,7 +80,78 @@
     <!-- Page level custom scripts -->
     <script src="js/demo/chart-area-demo.js"></script>
     <script src="js/demo/chart-pie-demo.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
+        integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <script>
+        let sent = "<div class='col-12'><h1>Sent</h1></div>";
+        let recieved = "<div class='col-12'><h1>Recieved</h1></div>";
+
+        axios
+            .get(
+                "http://127.0.0.1:8000/api/history", {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                }
+            )
+            .then((ans) => {
+                return ans.data;
+            }).then(data => {
+                console.log(data);
+                data.transactions.forEach(element => {
+                    console.log(element);
+                    sent += `<div class="col-12 ">
+                        <div class="p-5">
+                            <div class="card mb-4">
+                                <div class="card-header py-3 text-center">
+                                    <h6 class="m-0 font-weight-bold text-primary">
+                                        ${moment(element.created_at).format("YYYY-MM-DD hh:mm")} 
+                                    </h6>
+                                    ${element.status!='completed'? ' <span style="color:#b38f00">Waiting</span>':'<span style="color:#489936">Completed</span>'}
+                                </div>
+                                <div class="card-body">
+                                    servise transfer to : ${element.reciever.phone}
+                                    <hr>
+                                    amount : $${element.amount}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    `
+                });
+
+                data.recieved.forEach(element => {
+                console.log(element);
+                recieved += `<div class="col-12 ">
+                    <div class="p-5">
+                        <div class="card mb-4">
+                            <div class="card-header py-3 text-center">
+                                <h6 class="m-0 font-weight-bold text-primary">
+                                    ${moment(element.created_at).format("YYYY-MM-DD hh:mm")}
+                                </h6>
+                                ${element.status!='completed'? ' <span style="color:#b38f00">Waiting</span>':'<span style="color:#489936">Completed</span>'}
+                            </div>
+                            <div class="card-body">
+                                Transfer From : ${element.card.user.phone}
+                                <hr>
+                                amount : $${element.amount}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `
+                });
+
+                document.querySelector('.sent').innerHTML = sent;
+                document.querySelector('.reciever').innerHTML = recieved;
+            }).catch(error => {
+                console.log(error);
+            });
+    </script>
 </body>
 
 </html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>GetCard</title>
+<script>
+    if (!localStorage.getItem('token')) {
+        window.location = "/index.html";
+    }
+</script>
+    <!-- Custom fonts for this template-->
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+
+</head>
+
+<body class="bg-gradient-muted">
+
+    <div class="container">
+
+        <!-- Outer Row -->
+        <div class="row justify-content-center">
+
+            <div class="col-xl-10 col-lg-12 col-md-9">
+
+                <div class="card o-hidden border-0  my-5" id="card-container">
+                    <div class="card-body p-0">
+                        <!-- Nested Row within Card Body -->
+                        <div class="row ">
+                            <div class="col-lg-6 d-none d-lg-block bg-password-image">
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="p-5">
+                                    <div class="text-center">
+                                        <h1 class="h4 text-gray-900 mb-2"></h1>
+                                        <p class="mb-4 custom-text-message" > </p>
+
+                                       
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="js/sb-admin-2.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <script>
+        axios
+            .get(
+                "http://127.0.0.1:8000/api/verified", {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                }
+            )
+            .then((ans) => {
+                return ans.data;
+            }).then(data => {
+                console.log(data);
+                let container = document.getElementById('card-container');
+                let textArear=document.querySelector('.custom-text-message');
+                if(data){
+                if (data.status == "waiting") {
+                    container.style.boxShadow="-1px 0px 192px -11px rgba(235,164,100,1)";
+                    textArear.innerHTML=textArear.innerHTML + 'Your Application is pending. If this situation last more than 24H do not hesitate to contact us.'
+                } else if (data.status == 'completed') {
+                    container.style.boxShadow="-1px 0px 192px -11px rgba(27,202,58,1)";
+                    textArear.innerHTML=textArear.innerHTML + 'Your Documents are verified. <br> You can get your card by clicking on <a href="card.html">Get Card</a>.';
+                    
+                    console.log('completed');
+                } else if (data.status == 'refused') {
+                    container.style.boxShadow="-1px 0px 192px -11px rgba(243,57,57,1)";
+                    textArear.innerHTML=textArear.innerHTML + 'Your Application has been refused. If you feel that this is a mistake, resend your documents or contact us.'
+                    console.log('refused');
+                }
+            }else{
+                 textArear.innerHTML='You have not uploaded documents yet.<br>To get the most of our Application, you need to upload your documents'
+            }
+
+            }).catch(error => {
+                console.log(error);
+            });
+    </script>
+</body>
+
+</html>

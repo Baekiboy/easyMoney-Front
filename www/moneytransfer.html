@@ -19,6 +19,13 @@
 
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <style>
+        .bg-password-image {
+            background: url('https://image.freepik.com/free-vector/people-using-mobile-bank-remittance-money_74855-6617.jpg');
+            background-position: center;
+            background-size: cover;
+        }
+    </style>
 
 </head>
 
@@ -36,32 +43,34 @@
                         <!-- Nested Row within Card Body -->
                         <div class="row">
                             <div class="col-lg-6 d-none d-lg-block bg-password-image"></div>
-                            <div class="col-lg-6">
-                                <div class="p-5">
+                            <div class="col-lg-6 form-container">
+                                <div class="p-5 text-center">
                                     <div class="text-center">
                                         <h1 class="h4 text-gray-900 mb-2"></h1>
                                         <p class=" mb-4">Amount to transfer</p>
                                     </div>
-                                    <form class="user">
+                                    <form class="user" onsubmit="transfer(event)">
                                         <div class="form-group">
-                                            <input type="number" class="form-control form-control-user"
-                                                id="number" aria-describedby="number"
-                                                placeholder="0.000">
+                                            <input type="number" class="form-control form-control-user" id="amount"
+                                                aria-describedby="number" placeholder="0.000">
                                         </div>
                                         <div class="text-center">
                                             <h1 class="h4 text-gray-900 mb-2"></h1>
                                             <p class=" mb-4">Destination</p>
                                         </div>
                                         <div class="form-group">
-                                            <input type="number" class="form-control form-control-user"
-                                                id="number" aria-describedby="number"
-                                                placeholder="Phone number">
+                                            <input type="number" class="form-control form-control-user" id="phone"
+                                                aria-describedby="number" placeholder="Phone number">
                                         </div>
 
                                         <br>
-                                        <a href="menu.html" class="btn btn-primary btn-user btn-block">
-                                            SEND
-                                        </a>
+                                        <span style="display: none;color:red;" class="err">An Error has occured. Please
+                                            verify the destination phone number or make sure you have the right amount
+                                            in your card.</span>
+
+                                        <input value="SEND" type="submit" class="btn btn-primary btn-user btn-block">
+
+                                        </input>
                                     </form>
                                 </div>
                             </div>
@@ -84,6 +93,113 @@
 
     <!-- Custom scripts for all pages-->
     <script src="js/sb-admin-2.min.js"></script>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <script>
+        var transaction_id;
+
+        function transfer(event) {
+            event.preventDefault();
+            let amount = document.getElementById('amount').value;
+            let phone = document.getElementById('phone').value;
+            if (amount && phone) {
+                axios
+                    .post(
+                        "http://127.0.0.1:8000/api/card/transfer", {
+                            amount,
+                            phone
+                        }, {
+
+                            headers: {
+                                'Authorization': `Bearer ${localStorage.getItem('token')}`
+                            }
+                        }
+                    )
+                    .then((ans) => {
+                        return ans.data;
+                    }).then(data => {
+                        console.log(data);
+                        transaction_id = data.transaction.id;
+                        document.querySelector('.form-container').innerHTML = `<div class="p-5 text-center">
+                            <div class="text-center">
+                                <h1 class="h4 text-gray-900 mb-2"></h1>
+                                <p class=" mb-4" style="font-weight: 900;">Enter the verification code that we sent you
+                                    in your email to complete the transaction</p>
+                            </div>
+                            <form class="user" onsubmit="verify(event)">
+                                <div class="form-group">
+                                    <input type="text" class="form-control form-control-user" id="verification_number"
+                                        aria-describedby="number" placeholder="Verification Code">
+                                </div>
+
+
+
+                                <br>
+
+                        <span style="display: none;color:red;" class="err">An Error has occured. Make sure that you entered the right verification code.</span>
+                                <input value="Make Transaction" type="submit"
+                                    class="btn btn-primary btn-user btn-block">
+
+
+                            </form>
+                        </div>`;
+
+
+                    }).catch(error => {
+                        document.querySelector('.err').style.display = 'block';
+                    });
+            }
+        }
+
+        function verify(event) {
+            event.preventDefault();
+            verification_number = document.getElementById('verification_number').value;
+            console.log(verification_number);
+
+            axios
+                .post(
+                    "http://127.0.0.1:8000/api/card/make_transfer", {
+                        verification_number,
+                        transaction_id
+                    }, {
+
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        }
+                    }
+                )
+                .then((ans) => {
+                    return ans.data;
+                }).then(data => {
+                    document.querySelector('.form-container').innerHTML = `
+                    <div class="p-5 text-center">
+                        <div class="text-center">
+                            <h1 class="h4 text-gray-900 mb-2"></h1>
+                            <p class=" mb-4" style="font-weight: 900;">Money Send Successfully</p>
+                        </div>
+                        <div class="text-center">
+                            Thank you for choosing us
+                        </div>
+                        <br>
+                        <img src="https://image.flaticon.com/icons/png/512/190/190411.png" style="
+    width: 104px;
+">
+                    </div>`;
+                    setTimeout(()=>{
+                        window.location='/menu.html';
+                    },1500);
+
+                }).catch(error => {
+                    document.querySelector('.err').style.display = 'block';
+                });
+
+
+
+        }
+    </script>
+
+
 
 </body>
 

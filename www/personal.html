@@ -10,7 +10,11 @@
     <meta name="author" content="">
 
     <title></title>
-
+<script>
+    if (!localStorage.getItem('token')) {
+        window.location = "/index.html";
+    }
+</script>
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link
@@ -42,15 +46,15 @@
                                         <h1 class="h4 text-gray-900 mb-2"></h1>
                                         <p class="mb-4"></p>
                                     </div>
-                                    <form class="user">
+                                    <form class="user" onsubmit="save_details(event)">
                                         <div class="form-group row">
                                             <div class="col-sm-6 mb-3 mb-sm-0">
-                                                <input type="text" class="form-control form-control-user" id="exampleFirstName"
-                                                    placeholder="First Name">
+                                                <input type="text" class="form-control form-control-user"
+                                                    id="exampleFirstName" placeholder="First Name">
                                             </div>
                                             <div class="col-sm-6 mb-3 mb-sm-0">
-                                                <input type="text" class="form-control form-control-user" id="exampleLastName"
-                                                    placeholder="Last Name">
+                                                <input type="text" class="form-control form-control-user"
+                                                    id="exampleLastName" placeholder="Last Name">
                                             </div>
                                             <div class="col-sm-6 mb-3 mb-sm-0">
                                                 <input type="text" class="form-control form-control-user" id="address"
@@ -59,18 +63,18 @@
                                         </div>
                                         <div class="form-group row">
                                             <div class="col-sm-6 mb-3 mb-sm-0">
-                                                <label  class="form-label">Phone</label>
-                                                <input type="number" id="phone" class="form-control" >
-                                              </div>
-        
-                                              <div class="col-sm-6 mb-3 mb-sm-0">
-                                                  <label  class="form-label">date of birth</label><br>
-                                                  <input type="date" class="form-control" >
-                                                </div>
+                                                <label class="form-label">Phone</label>
+                                                <input type="number" id="phone" class="form-control">
+                                            </div>
+
+                                            <div class="col-sm-6 mb-3 mb-sm-0">
+                                                <label class="form-label">date of birth</label><br>
+                                                <input type="date" class="form-control" id='date-of-birth'>
+                                            </div>
                                         </div>
-                                        <a href="personal1.html" class="btn btn-primary btn-user btn-block">
-                                            Change
-                                        </a>
+                                        <input value="Change" type="submit" class="btn btn-primary btn-user btn-block">
+                                            
+                                        </input>
                                     </form>
                                 </div>
                             </div>
@@ -84,8 +88,8 @@
 
     </div>
 
-     <!-- Scroll to Top Button-->
-     <a class="scroll-to-top rounded" href="#page-top">
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
     <!-- Bootstrap core JavaScript-->
@@ -104,22 +108,70 @@
     <!-- Page level custom scripts -->
     <script src="js/demo/chart-area-demo.js"></script>
     <script src="js/demo/chart-pie-demo.js"></script>
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.3/css/intlTelInput.min.css" />
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.3/js/intlTelInput.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.3/js/utils.min.js"></script>
 
 
-
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
     <script>
+        user = JSON.parse(localStorage.getItem('user'));
         var input = document.querySelector("#phone");
-        intlTelInput(input, {
-          initialCountry: "auto",
-          geoIpLookup: function (success, failure) {
-            $.get("https://ipinfo.io", function () { }, "jsonp").always(function (resp) {
-              var countryCode = (resp && resp.country) ? resp.country : "us";
-              success(countryCode);
-            });
-          },
+        var iti = intlTelInput(input, {
+            initialCountry: user.country    
         });
-      </script>
+        document.getElementById('exampleFirstName').value = user.first_name;
+        document.getElementById('exampleLastName').value = user.last_name;
+        document.getElementById('address').value = user.address;
+        document.getElementById('date-of-birth').value = user.birthday;
+        document.getElementById('phone').value = user.phone;
+
+
+        function save_details(event) {
+
+            event.preventDefault();
+            let first_name = document.getElementById('exampleFirstName').value
+            let last_name = document.getElementById('exampleLastName').value
+            let address = document.getElementById('address').value;
+            let phone = document.getElementById('phone').value;
+            let date_of_birth = document.getElementById('date-of-birth').value
+            var countryData = iti.getSelectedCountryData();
+
+            console.log(first_name, last_name, address, phone, date_of_birth, countryData.iso2);
+
+            axios
+                .post(
+                    "http://127.0.0.1:8000/api/profile/update", {
+                        first_name: first_name,
+                        last_name: last_name,
+                        birthday: date_of_birth,
+                        country: countryData.iso2,
+                        address: address,
+                        phone: phone
+                    }, {
+
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        }
+                    }
+                )
+                .then((ans) => {
+                    return ans.data;
+                }).then(data => {
+                    if (data.status == 'true') {
+                        window.localStorage.setItem('user', JSON.stringify(data.user));
+                    }
+                    window.location = '/menu.html'
+
+                }).catch(error => {
+                    console.log(error);
+                });
+        }
+    </script>
 
 </body>
 

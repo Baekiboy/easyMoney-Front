@@ -3,103 +3,106 @@
 
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="initial-scale=1.0,  width=device-width" >
-    <script
-    src="http://kit.fontawesome.com/64d58efce2.js"
-    crossorigin="anonymous"
-    ></script>
+    <meta name="viewport" content="initial-scale=1.0,  width=device-width">
+    <script src="http://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
     <title> Sign in & Sing up </title>
-    <link rel="stylesheet" href="./css/indexSinup.css" >
-    
+    <link rel="stylesheet" href="./css/indexSinup.css">
+
     <title>EasyMoney</title>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    
+
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <script>
+        if (localStorage.getItem('token')) {
+            let user = JSON.parse(localStorage.getItem('user'));
+            if (user.first_name) {
+                if (user.doc_verified == 1) {
+                    window.location = '/menu.html'
+                } else {
+                    window.location = '/idendoc.html'
+                }
+            }
+        }
+    </script>
 </head>
 
 <body>
     <div class="container">
         <div class="forms-container">
-        <div class="signin-signup">
-        <form action="idenperso.html" class="sign-in-form"> 
-            <h2 class="title">Sign in </h2>
-            <br>
-            <div class="input-field">
-                <i class="fas fa-user"></i>
-                <input type="text" placeholder="Username" >
+            <div class="signin-signup">
+
+
+
+                <form action="" class="sign-in-form" onsubmit="login(event)">
+                    <h2 class="title">Sign in </h2>
+                    <br>
+                    <div class="input-field">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="username" placeholder="Username">
+                    </div>
+                    <div class="input-field">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" placeholder="Password">
+                    </div>
+                    <br>
+                    <div style="display: none;color: red;" id='error'>The username or password are incorrect!</div>
+                    <input type="submit" value="login" class="btn btn-primary btn-user  text-white ">
+                    <hr>
+                    <div class="text-center">
+                        <a class="small" href="forgot-password.html">Forgot Password ?</a>
+                    </div>
+                </form>
+
+
+
+
+                <form action="" class="sign-up-form" onsubmit="signup(event)">
+                    <h2 class="title">Sign up </h2>
+                    <br>
+                    <div class="input-field">
+                        <i class="fas fa-user"></i>
+                        <input type="text" placeholder="Username" id="username-signup">
+                    </div>
+                    <div class="input-field">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" placeholder="Email" id="email-signup">
+                    </div>
+                    <div class="input-field">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" placeholder="Password" id="password-signup">
+                    </div>
+                    <br>
+                    <input type="submit" value="Sign up" class="btn btn-primary btn-user  text-white" id="btnsup">
+                </form>
             </div>
-            <div class="input-field">
-                <i class="fas fa-lock"></i>
-                <input type="password" placeholder="Password" >
-            </div>
-            <br>
-            <input type="submit" value="login" class="btn btn-primary btn-user  text-white ">
-            <!--<p class="social-text">Or Sign in with social platforms</p>
-            <div class="social-media">
-                <a href="#" class="social-icon">
-                    <i class="fab fa-facebook-f"></i>
-                </a>
-                <a href="#" class="social-icon">
-                    <i class="fab fa-twitter"></i>
-                </a>
-                <a href="#" class="social-icon">
-                    <i class="fab fa-google"></i>
-                </a>
-                <a href="#" class="social-icon">
-                    <i class="fab fa-linkedin-in"></i>
-                </a>
-            </div> -->
-            
-        <hr>
-        <div class="text-center">
-            <a class="small" href="forgot-password.html">Forgot Password ?</a>
-        </div>
-        </form>
-        <form action="" class="sign-up-form">
-            <h2 class="title">Sign up </h2>
-            <br>
-            <div class="input-field">
-                <i class="fas fa-user"></i>
-                <input type="text" placeholder="Username" >
-            </div>
-            <div class="input-field">
-                <i class="fas fa-envelope"></i>
-                <input type="text" placeholder="Email" >
-            </div>
-            <div class="input-field">
-                <i class="fas fa-lock"></i>
-                <input type="password" placeholder="Password" >
-            </div>
-            <br>
-            <input type="submit" value="Sign up" class="btn btn-primary btn-user  text-white" id="btnsup">
-        </form>
-        </div>
         </div>
         <div class="panels-container">
-         <div class="panel left-panel">
-         <div class="content"> 
-             <h3>New here ?</h3>
-             <p> do you want to be with us ?</p>
-             <button class="btn transparent  text-white" id="sign-up-btn">Sign up</button>
-         </div>
+            <div class="panel left-panel">
+                <div class="content">
+                    <h3>New here ?</h3>
+                    <p> do you want to be with us ?</p>
+                    <button class="btn transparent  text-white" id="sign-up-btn">Sign up</button>
+                </div>
 
-         <img src="./img/undraw_transfer_money_rywa.svg" class="image" alt="">
-         </div>
-         <div class="panel right-panel">
-            <div class="content">
-                <h3>One of us ?</h3>
-                <p> already with us !</p>
-                <button class="btn transparent  text-white" id="sign-in-btn">Sign in</button>
+                <img src="./img/undraw_transfer_money_rywa.svg" class="image" alt="">
             </div>
-   
-            <img src="./img/undraw_pay_online_b1hk.svg" class="image" alt="">
+            <div class="panel right-panel">
+                <div class="content">
+                    <h3>One of us ?</h3>
+                    <p> already with us !</p>
+                    <button class="btn transparent  text-white" id="sign-in-btn">Sign in</button>
+                </div>
+
+                <img src="./img/undraw_pay_online_b1hk.svg" class="image" alt="">
             </div>
         </div>
     </div>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="./js/index.js"></script>
+
 </body>
 
 </html>

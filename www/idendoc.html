@@ -10,7 +10,11 @@
     <meta name="author" content="">
 
     <title>Register</title>
-
+    <style>
+        .input-fields label {
+            width: 130px;
+        }
+    </style>
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link
@@ -21,11 +25,12 @@
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
 
     <link href='https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.3/css/intlTelInput.min.css" />
-  <!-- JS -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.3/js/intlTelInput.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.3/js/utils.min.js"></script>
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.3/css/intlTelInput.min.css" />
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.3/js/intlTelInput.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.3/js/utils.min.js"></script>
 
 </head>
 
@@ -43,30 +48,38 @@
                             <div class="text-center">
                                 <h1 class="h4 text-gray-700 mb-4">Identification documents</h1>
                             </div>
-                            <form class="user">
-                            <br>
-                            <img src="img/undraw_personal_info_0okl.svg" style="width:100%;"  ></img>
-                       <br>
-                       <br>
-                      <h4> Put at least one of them : </h4>
-                      <br>
-                      <ul>
-                        <li>Passport
-                        <li>Selfie with your ID
-                        <li>Driving lisence
-                        </ul>
-                        <br>
-                       <br>
-                       <br>
-                       <br> 
-                       <a href="" class="btn btn-success btn-user btn-block">
-                       OPEN CAMERA
-                    </a>
-                    <hr>
-                    <a href="bank.html" class="btn btn-success btn-user btn-block text-white" >
-                        NEXT
-                    </a> 
-                    </form>
+                            <form class="user" onsubmit="handleSubmit(event)">
+                                <br>
+                                <img src="img/undraw_personal_info_0okl.svg" style="width:100%;"></img>
+                                <br>
+                                <br>
+                                <h4> Select one of available methods : </h4>
+                                <br>
+                                <ul>
+                                    <li><label for="passport"><input type="radio" id="passport" name="method"
+                                                value="passport" onclick="handleClick(this)"> Passport</label><br>
+                                    <li><label for="id-card"><input type="radio" id="id-card" name="method"
+                                                value="ID card" checked onclick="handleClick(this)"> ID card</label>
+                                    <li><label for="drivers"><input type="radio" id="drivers" name="method"
+                                                value="driving licence" onclick="handleClick(this)"> Driving
+                                            Licence</label>
+
+                                </ul>
+                                <br>
+                                <br>
+                                <br>
+                                <br>
+                                <div class="input-fields">
+                                    <label for="front-image">Front Image</label>
+                                    <input type="file" name="front-image" id="front-image"><br>
+                                    <label for="front-image">Back Image</label>
+                                    <input type="file" name="back-image" id="back-image">
+                                </div>
+                                <hr>
+                                <input type="submit" class="btn btn-success btn-user btn-block text-white">
+
+                                </input>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -74,8 +87,8 @@
         </div>
 
     </div>
-     <!-- Scroll to Top Button-->
-     <a class="scroll-to-top rounded" href="#page-top">
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
     <!-- Bootstrap core JavaScript-->
@@ -94,7 +107,72 @@
     <!-- Page level custom scripts -->
     <script src="js/demo/chart-area-demo.js"></script>
     <script src="js/demo/chart-pie-demo.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
+    <script>
+        var prev = 'ID card';
+
+        function handleClick(el) {
+            if ((el.value == 'ID card' || el.value == 'driving licence') && prev == 'passport') {
+                console.log('wa');
+                document.querySelector('.input-fields').innerHTML = `<label for="front-image">Front Image</label>
+                <input type="file" name="front-image" id="front-image"><br>
+                <label for="front-image">Back Image</label>
+                <input type="file" name="back-image" id="back-image">`
+            } else if ((prev == 'ID card' || prev == 'driving licence') && el.value == 'passport') {
+                document.querySelector('.input-fields').innerHTML = `<label for="image"> Passport Image</label>
+                <input type="file" name="image" id="image"><br>`
+
+            }
+            prev = el.value;
+        }
+
+        function handleSubmit(e) {
+            e.preventDefault();
+            var formData = new FormData();
+            let method;
+            Array.from(document.getElementsByName('method')).forEach(x => {
+                if (x.checked) {
+                    method = x.value;
+                    return;
+                }
+            });
+            console.log(method);
+            formData.append("type", method);
+
+            if (method == 'passport') {
+                let imagefile = document.querySelector('#image');
+                formData.append("image", imagefile.files[0]);
+            } else {
+                let front_imagefile = document.querySelector('#front-image');
+                let back_imagefile = document.querySelector('#back-image');
+                formData.append("front_image", front_imagefile.files[0]);
+                formData.append("back_image", back_imagefile.files[0]);
+            }
+               axios
+               .post(
+               "http://127.0.0.1:8000/api/verify/docs", 
+                formData
+               , {
+
+               headers: {
+               'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'multipart/form-data'
+               }
+               }
+               )
+               .then((ans) => {
+               return ans.data;
+               }).then(data => {
+               if(data.status==201){
+                   window.location="/menu.html"
+               }
+
+               }).catch(error => {
+               console.log(error);
+               });
+        }
+    </script>
 </body>
 
 </html>

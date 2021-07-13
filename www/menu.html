@@ -19,104 +19,124 @@
 
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
+    <script>
+        if (!localStorage.getItem('token')) {
+            window.location = "/index.html";
+        } else {
+            axios
+                .get(
+                    "http://127.0.0.1:8000/api/current_user", {
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        }
+                    }
+                )
+                .then((ans) => {
+                    return ans.data;
+                }).then((data)=>{
+                    localStorage.setItem('user',JSON.stringify(data))
+                })
+        }
+    </script>
 </head>
 
 <body id="page-top">
 
     <!-- Page Wrapper -->
     <div id="wrapper">
-  <!-- Sidebar -->
-  <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
-<!-- Sidebar - Brand -->
-<a class="sidebar-brand d-flex align-items-center justify-content-center" href="menu.html">
-    <div class="sidebar-brand-icon ">
-       <i class="fas fa-dollar-sign"></i>
-    </div>
-</a>
+            <!-- Sidebar - Brand -->
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="menu.html">
+                <div class="sidebar-brand-icon ">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+            </a>
 
-<!-- Divider -->
-<hr class="sidebar-divider my-0">
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
 
-<!-- Nav Item - Dashboard -->
-<li class="nav-item active">
-    <a class="nav-link" href="menu.html">
-      
-        <span>Mootez.Beki</span></a>
-</li>
+            <!-- Nav Item - Dashboard -->
+            <li class="nav-item active">
+                <a class="nav-link" href="menu.html">
 
-<!-- Divider -->
-<hr class="sidebar-divider">
+                    <span id="username">Mootez.Beki</span></a>
+            </li>
 
-<!-- Heading -->
-<div class="sidebar-heading">
-Menu
-</div>
-<!-- Nav Item -  Home Menu -->
-<li class="nav-item">
-    <a class="nav-link collapsed" href="menu.html" >
-        <i class="fa fa-home"></i>
-        <span>Home</span>
-    </a>
-</li>
-<!-- Nav Item - Profile Collapse Menu -->
- <li class="nav-item">
-    <a class="nav-link collapsed" href="personal.html">
-        <i class="fas fa-user"></i>
-        <span>Profile</span>
-    </a>
-</li>
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="moneytransfer.html">
-            <i class="fas fa-coins"></i>
-            <span>Money Transfer</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="card.html">
-            <i class="far fa-credit-card"></i>
-            <span>GetCard</span>
-        </a>
-    </li>
-    
-<li class="nav-item">
-    <a class="nav-link collapsed" href="history.html">
-        <i class="fas fa-history"></i>
-        <span>History</span>
-    </a>
-</li>
+            <!-- Divider -->
+            <hr class="sidebar-divider">
 
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                Menu
+            </div>
+            <!-- Nav Item -  Home Menu -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="menu.html">
+                    <i class="fa fa-home"></i>
+                    <span>Home</span>
+                </a>
+            </li>
+            <!-- Nav Item - Profile Collapse Menu -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="personal.html">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="moneytransfer.html">
+                    <i class="fas fa-coins"></i>
+                    <span>Money Transfer</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="get_card.html">
+                    <i class="far fa-credit-card"></i>
+                    <span>GetCard</span>
+                </a>
+            </li>
 
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="history.html">
+                    <i class="fas fa-history"></i>
+                    <span>History</span>
+                </a>
+            </li>
 
 
-<!-- Divider -->
-<hr class="sidebar-divider">
 
-<!-- Heading -->
-<div class="sidebar-heading">
-    Logout
-</div>
 
-<!-- Nav Item - Pages Collapse Menu -->
-<li class="nav-item">
-    <a class="nav-link collapsed" href="index.html" >
-        <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Logout
-                                </a>
-       
-    </a>
-    
-</li>
-<!-- Divider -->
-<hr class="sidebar-divider d-none d-md-block">
+            <!-- Divider -->
+            <hr class="sidebar-divider">
 
-<!-- Sidebar Toggler (Sidebar) -->
-<div class="text-center d-none d-md-inline">
-    <button class="rounded-circle border-0" id="sidebarToggle"></button>
-</div>
-</ul>
-<!-- End of Sidebar -->
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                Logout
+            </div>
+
+            <!-- Nav Item - Pages Collapse Menu -->
+            <li class="nav-item logout-but">
+                <a class="nav-link collapsed">
+                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                    Logout
+                </a>
+
+                </a>
+
+            </li>
+            <!-- Divider -->
+            <hr class="sidebar-divider d-none d-md-block">
+
+            <!-- Sidebar Toggler (Sidebar) -->
+            <div class="text-center d-none d-md-inline">
+                <button class="rounded-circle border-0" id="sidebarToggle"></button>
+            </div>
+        </ul>
+        <!-- End of Sidebar -->
 
 
         <!-- Content Wrapper -->
@@ -133,9 +153,9 @@ Menu
                     <ul class="navbar-nav ml-auto">
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="profile.html" >
+                            <a class="nav-link dropdown-toggle" href="profile.html">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small"></span>
-                                <img class="img-profile rounded-circle" src="img/undraw_profile.svg" >
+                                <img class="img-profile rounded-circle" src="img/undraw_profile.svg">
                             </a>
                         </li>
                     </ul>
@@ -152,14 +172,14 @@ Menu
                             <div class="card mb-4">
                                 <div class="card-header py-3">
                                     <div class="text-center">
-                                    <h6 class="m-0 font-weight-bold text-primary">BALANCE</h6>
+                                        <h6 class="m-0 font-weight-bold text-primary">BALANCE</h6>
                                     </div>
                                 </div>
                                 <div class="text-center">
-                                <div class="card-body">
-                                   $22222
+                                    <div class="card-body" id="card-amount">
+                                        *****************************
+                                    </div>
                                 </div>
-                            </div>
                             </div>
                         </div>
                     </div>
@@ -172,14 +192,14 @@ Menu
                             <div class="card mb-4">
                                 <div class="card-header py-3">
                                     <div class="text-center">
-                                    <h6 class="m-0 font-weight-bold text-primary">CARD NUMBER</h6>
+                                        <h6 class="m-0 font-weight-bold text-primary">CARD NUMBER</h6>
                                     </div>
                                 </div>
                                 <div class="text-center">
-                                <div class="card-body">
-                                   0123 4567 8901 2345
+                                    <div class="card-body" id="card-number">
+                                        *****************************
+                                    </div>
                                 </div>
-                            </div>
                             </div>
                         </div>
                     </div>
@@ -192,37 +212,88 @@ Menu
                             <div class="card mb-4">
                                 <div class="card-header py-3">
                                     <div class="text-center">
-                                    <h6 class="m-0 font-weight-bold text-primary">RIB</h6>
+                                        <h6 class="m-0 font-weight-bold text-primary">EXPIRATION DATE</h6>
                                     </div>
                                 </div>
                                 <div class="text-center">
-                                <div class="card-body">
-                                   TN00 0123 4567 8901 2345 6789
+                                    <div class="card-body" id="exp-date">
+                                        *****************************
+                                    </div>
                                 </div>
-                            </div>
                             </div>
                         </div>
                     </div>
-                    <img src="img/201348993_2854558604855830_3601396299022788411_n.png" style="width:100%;"  ></img>
 
-                 </div>
-            <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
 
-    <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
 
-    <!-- Page level plugins -->
-    <script src="vendor/chart.js/Chart.min.js"></script>
+                    <div class="row">
 
-    <!-- Page level custom scripts -->
-    <script src="js/demo/chart-area-demo.js"></script>
-    <script src="js/demo/chart-pie-demo.js"></script>
+                        <div class="col-lg-6">
 
+                            <!-- Overflow Hidden -->
+                            <div class="card mb-4">
+                                <div class="card-header py-3">
+                                    <div class="text-center">
+                                        <h6 class="m-0 font-weight-bold text-primary">RIB</h6>
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="card-body" id="rib">
+                                        *****************************
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <img src="img/201348993_2854558604855830_3601396299022788411_n.png" style="width:100%;"></img>
+
+                </div>
+                <!-- Bootstrap core JavaScript-->
+                <script src="vendor/jquery/jquery.min.js"></script>
+                <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+                <!-- Core plugin JavaScript-->
+                <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+                <!-- Custom scripts for all pages-->
+                <script src="js/sb-admin-2.min.js"></script>
+
+                <!-- Page level plugins -->
+                <script src="vendor/chart.js/Chart.min.js"></script>
+
+                <!-- Page level custom scripts -->
+                <script src="js/demo/chart-area-demo.js"></script>
+                <script src="js/demo/chart-pie-demo.js"></script>
+                <script>
+                    document.querySelector('.logout-but').addEventListener('click', () => {
+                        localStorage.clear();
+                        window.location = '/menu.html';
+                    });
+                    let user = JSON.parse(localStorage.getItem('user'));
+                    axios
+                        .get(
+                            "http://127.0.0.1:8000/api/card/fetch", {
+                                headers: {
+                                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                                }
+                            }
+                        )
+                        .then((ans) => {
+                            return ans.data;
+                        }).then(data => {
+                            console.log(data);
+                            document.getElementById('card-amount').innerText = data.amount;
+                            document.getElementById('card-number').innerText = data.number;
+                            document.getElementById('rib').innerText =
+                                'You have to link your card to a bank account';
+                            document.getElementById('exp-date').innerText = data.exp_date;
+
+                            document.getElementById('username').innerText = user.first_name
+                        }).catch(error => {
+                            console.log(error);
+                        });
+                </script>
 </body>
 
 </html>
