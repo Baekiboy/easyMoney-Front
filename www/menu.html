@@ -283,13 +283,16 @@
                             return ans.data;
                         }).then(data => {
                             console.log(data);
-                            document.getElementById('card-amount').innerText = data.amount;
-                            document.getElementById('card-number').innerText = data.number;
+                            document.getElementById('card-amount').innerText = data.amount || "*****************************";
+                            document.getElementById('card-number').innerText = data.number||
+                            "*****************************";
                             document.getElementById('rib').innerText =
                                 'You have to link your card to a bank account';
-                            document.getElementById('exp-date').innerText = data.exp_date;
+                            document.getElementById('exp-date').innerText = data.exp_date||
+                            "*****************************";
 
-                            document.getElementById('username').innerText = user.first_name
+                            document.getElementById('username').innerText = user.first_name ||
+                            "*****************************";
                         }).catch(error => {
                             console.log(error);
                         });
